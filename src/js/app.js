@@ -14,13 +14,13 @@ const newProjectName = document.getElementById('new-project-name');
 
 document.addEventListener('DOMContentLoaded', loadFromLocalStorage);
 
-// Load projects and todos from localStorage
+
 function loadFromLocalStorage() {
   renderProjectsList();
   renderTodoList();
 }
 
-// Render Project Options in Select Dropdown
+
 function renderProjectsList() {
   const projects = renderProjects();
   projectSelect.innerHTML = '<option value="" disabled selected>Select a project</option>';
@@ -33,7 +33,7 @@ function renderProjectsList() {
   });
 }
 
-// Render Todos for the Selected Project
+
 function renderTodoList() {
   const selectedProjectId = projectSelect.value;
   const todos = renderTodos().filter(todo => todo.projectId === selectedProjectId);
@@ -51,11 +51,11 @@ function renderTodoList() {
     
     li.dataset.id = todo.id;
     
-    // Handle Mark Complete
+    
     const completeBtn = li.querySelector('.complete-btn');
     completeBtn.addEventListener('click', () => markComplete(todo.id));
 
-    // Handle Delete
+    
     const deleteBtn = li.querySelector('.delete-btn');
     deleteBtn.addEventListener('click', () => deleteTodo(todo.id));
 
@@ -63,7 +63,7 @@ function renderTodoList() {
   });
 }
 
-// Handle Add Project
+
 addProjectBtn.addEventListener('click', () => {
   const projectName = newProjectName.value;
   if (projectName.trim()) {
@@ -73,7 +73,7 @@ addProjectBtn.addEventListener('click', () => {
   }
 });
 
-// Handle Add Todo
+
 addTodoBtn.addEventListener('click', () => {
   const title = todoTitle.value;
   const description = todoDescription.value;
