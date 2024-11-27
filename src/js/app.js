@@ -1,8 +1,8 @@
+// Importing required functions from modules
 import { addTodo, renderTodos, markComplete, deleteTodo } from './todo';
 import { addProject, renderProjects } from './project';
-import '../css/style.css';  // Corrected path
+import '../css/style.css';
 
-const todoList = document.getElementById('todo-list');
 const projectSelect = document.getElementById('project-select');
 const addProjectBtn = document.getElementById('add-project-btn');
 const addTodoBtn = document.getElementById('add-todo-btn');
@@ -11,21 +11,19 @@ const todoDescription = document.getElementById('todo-description');
 const todoDueDate = document.getElementById('todo-due-date');
 const todoPriority = document.getElementById('todo-priority');
 const newProjectName = document.getElementById('new-project-name');
+const todoList = document.getElementById('todo-list');
 
-document.addEventListener('DOMContentLoaded', loadFromLocalStorage);
-
-// Load projects and todos from localStorage
-function loadFromLocalStorage() {
+// DOM content loaded
+document.addEventListener('DOMContentLoaded', () => {
   renderProjectsList();
   renderTodoList();
-}
+});
 
-// Render Project Options in Select Dropdown
+// Render project dropdown
 function renderProjectsList() {
   const projects = renderProjects();
   projectSelect.innerHTML = '<option value="" disabled selected>Select a project</option>';
-  
-  projects.forEach(project => {
+  projects.forEach((project) => {
     const option = document.createElement('option');
     option.value = project.id;
     option.textContent = project.name;
@@ -33,70 +31,68 @@ function renderProjectsList() {
   });
 }
 
-// Render Todos for the Selected Project
+// Render To-Dos
 function renderTodoList() {
-  const selectedProjectId = projectSelect.value;
-  const todos = renderTodos().filter(todo => todo.projectId === selectedProjectId);
-  
+  const todos = renderTodos();
   todoList.innerHTML = '';
-  
-  todos.forEach(todo => {
+
+  todos.forEach((todo) => {
     const li = document.createElement('li');
     li.className = todo.completed ? 'completed' : '';
     li.innerHTML = `
-      <strong>${todo.title}</strong> - ${todo.dueDate} (${todo.priority})
-      <button class="complete-btn">${todo.completed ? 'Undo' : 'Complete'}</button>
-      <button class="delete-btn">Delete</button>
+      <div>
+        <strong>${todo.title}</strong> - ${todo.dueDate} (${todo.priority})
+        <p>${todo.description}</p>
+      </div>
+      <div>
+        <button class="complete-btn">${todo.completed ? 'Undo' : 'Complete'}</button>
+        <button class="delete-btn">Delete</button>
+      </div>
     `;
-    
-    li.dataset.id = todo.id;
-    
-    // Handle Mark Complete
-    const completeBtn = li.querySelector('.complete-btn');
-    completeBtn.addEventListener('click', () => markComplete(todo.id));
-
-    // Handle Delete
-    const deleteBtn = li.querySelector('.delete-btn');
-    deleteBtn.addEventListener('click', () => deleteTodo(todo.id));
-
     todoList.appendChild(li);
+
+    li.querySelector('.complete-btn').addEventListener('click', () => {
+      markComplete(todo.id);
+      renderTodoList();
+    });
+
+    li.querySelector('.delete-btn').addEventListener('click', () => {
+      deleteTodo(todo.id);
+      renderTodoList();
+    });
   });
 }
 
-// Handle Add Project
+// Add project
 addProjectBtn.addEventListener('click', () => {
-  const projectName = newProjectName.value;
-  if (projectName.trim()) {
+  const projectName = newProjectName.value.trim();
+  if (projectName) {
     addProject(projectName);
-    newProjectName.value = '';
     renderProjectsList();
+    newProjectName.value = '';
+  } else {
+    alert('Please enter a valid project name.');
   }
 });
 
-// Handle Add Todo
+// Add Todo
 addTodoBtn.addEventListener('click', () => {
-  const title = todoTitle.value;
-  const description = todoDescription.value;
-  const dueDate = todoDueDate.value;
-  const priority = todoPriority.value;
-  const projectId = projectSelect.value;
+  const todo = {
+    title: todoTitle.value,
+    description: todoDescription.value,
+    dueDate: todoDueDate.value,
+    priority: todoPriority.value,
+    completed: false,
+    projectId: parseInt(projectSelect.value, 10),
+    id: Date.now(),
+  };
 
-  if (title && description && dueDate && projectId) {
-    const todo = {
-      id: Date.now(),
-      title,
-      description,
-      dueDate,
-      priority,
-      completed: false,
-      projectId
-    };
-    
+  if (todo.title && todo.description && todo.dueDate && todo.projectId) {
     addTodo(todo);
     renderTodoList();
     clearTodoInputs();
   } else {
-    alert('Please fill out all fields');
+    alert('Please fill in all fields.');
   }
 });
 
@@ -104,5 +100,6 @@ function clearTodoInputs() {
   todoTitle.value = '';
   todoDescription.value = '';
   todoDueDate.value = '';
-  todoPriority.value = 'Medium';
+  todoPriority.value = '';
 }
+

@@ -1,3 +1,4 @@
+// project.js
 let projects = JSON.parse(localStorage.getItem('projects')) || [];
 
 export function addProject(projectName) {
@@ -16,3 +17,4 @@ export function renderProjects() {
 export function saveToLocalStorage() {
   localStorage.setItem('projects', JSON.stringify(projects));
 }
+
